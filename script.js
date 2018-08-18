@@ -8,7 +8,8 @@ var config = {
   };
   firebase.initializeApp(config);
 
-var trainData = firebase.database();
+var database = firebase.database();
+var trainArr = database.ref("/trainArr")
 
 $("#submit").on("click", function(event) {
 
@@ -25,7 +26,7 @@ $("#submit").on("click", function(event) {
         frequency: frequency
     };
     
-    trainData.ref("/trainArr").push(train)
+    database.ref("/trainArr").push(train)
 
     $("#trainName").val("")
     $("#destination").val("")
@@ -35,7 +36,7 @@ $("#submit").on("click", function(event) {
     renderTrains()
 })
 
-console.log(trainData.ref("/trainArr"))
+console.log(trainArr)
 
 function renderTrains() {
 
@@ -43,15 +44,21 @@ function renderTrains() {
 
     $("#trainTimes").append("<tr><th>Train Name</th><th>Destination</th><th>First Train</th><th>Frequency</th></tr>")
 
-    for (var i = 0; i < trainData.length; i++) {
+    for (var i = 0; i < database.length; i++) {
         $("#trainTimes").append("<tr>" +
-                "<td>" + trainData[i].trainName + "</td>" + 
-                "<td>" + trainData[i].destination + "</td>" + 
-                "<td>" + trainData[i].firstTrain + "</td>" + 
-                "<td>" + trainData[i].frequency + "</td>" + 
+                "<td>" + trainArr[i].trainName + "</td>" + 
+                "<td>" + trainArr[i].destination + "</td>" + 
+                "<td>" + trainArr[i].firstTrain + "</td>" + 
+                "<td>" + trainArr[i].frequency + "</td>" + 
             "</tr>")
       }
 
 }
+
+trainArr.on("value", function(snap) {
+    if (snap.val()) {
+        renderTrains()
+    }
+})
 
 renderTrains()
